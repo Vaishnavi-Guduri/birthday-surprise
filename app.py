@@ -1,13 +1,13 @@
 import streamlit as st
 from datetime import datetime
-import qrcode
-from io import BytesIO
+import urllib.parse
 
 # ---------------- SETTINGS ----------------
 BESTIE_NAME = "Varuuu"
-SECRET_PASSWORD = "vaishu"   # change if you want
-# ------------------------------------------
+SECRET_PASSWORD = "vaishu"
+BIRTHDAY_DATE = datetime(2026, 1, 30)
 
+# ---------------- PAGE CONFIG ----------------
 st.set_page_config(
     page_title="Happy Birthday 💖",
     page_icon="🎂",
@@ -20,19 +20,12 @@ st.markdown("""
 body {
     background: linear-gradient(to bottom, #ffe6f0, #fff5f9);
 }
-
-h1, h2, h3, p {
-    text-align: center;
-    font-family: 'Trebuchet MS', sans-serif;
-}
-
 .heart {
     position: fixed;
-    color: #ff4d6d;
-    animation: float 6s infinite ease-in;
+    color: #ff5c8a;
+    animation: float 6s infinite;
     font-size: 24px;
 }
-
 @keyframes float {
     0% { bottom: -10%; opacity: 0; }
     50% { opacity: 1; }
@@ -42,77 +35,61 @@ h1, h2, h3, p {
 """, unsafe_allow_html=True)
 
 # Floating hearts
-for i in range(8):
+for i in range(12):
     st.markdown(
-        f"<div class='heart' style='left:{i*12+5}%; animation-delay:{i}s;'>❤</div>",
+        f"<div class='heart' style='left:{i*8+5}%; animation-delay:{i}s'>♥</div>",
         unsafe_allow_html=True
     )
 
 # ---------------- PASSWORD ----------------
-st.markdown("## 🔒 Private Birthday Surprise")
+st.title("🔒 Private Birthday Surprise")
+pwd = st.text_input("Enter the secret password", type="password")
 
-password = st.text_input("Enter the secret password", type="password")
-
-if password != SECRET_PASSWORD:
-    st.info("Enter the correct password to unlock 💖")
+if pwd != SECRET_PASSWORD:
+    st.warning("Wrong password 🤭")
     st.stop()
 
 # ---------------- MAIN CONTENT ----------------
-st.markdown(f"<h1>Happy Birthday {BESTIE_NAME} 🎂💗</h1>", unsafe_allow_html=True)
-st.markdown("<h3>Made with love, just for you</h3>", unsafe_allow_html=True)
+st.markdown(f"## 🎉 Happy Birthday {BESTIE_NAME} 🎉")
+st.markdown("### Made with love, just for you 💗")
 
-st.markdown("---")
+# ---------------- PHOTO UPLOAD ----------------
+st.markdown("### 📸 Upload Your Photo")
+photo = st.file_uploader("Choose a photo", type=["jpg", "jpeg", "png"])
 
-# ---------------- PHOTO (DIRECT) ----------------
-st.markdown("### 💖 A Memory I Love")
-
-st.image(
-    "bestie.jpg",     # <-- image file name
-    caption="Us 🤍",
-    use_container_width=True
-)
+if photo:
+    st.image(photo, caption="My favorite smile 💕", width=300)
 
 # ---------------- MESSAGE ----------------
 st.markdown("""
-<p>
-I know sometimes my words hurt you, and for that I’m truly sorry.  
-Please believe me—if my words hurt, my heart never does.  
-<br><br>
-I trust you deeply, and somewhere inside me, I believe you’ll never leave me.  
-When I get angry, I say things I don’t really mean, and I know it hurts.  
-That hurts me too.
-<br><br>
-Sometimes I feel like I’m not your first priority, and that’s the part that hurts the most.  
-I just wish you would value my words the way I value yours.
-<br><br>
-No matter what, I care about you more than I can explain.  
-My feelings come from trust, attachment, and love — never anger.
-</p>
-""", unsafe_allow_html=True)
+💖 From silly fights to endless laughs,  
+💖 From secrets to dreams,  
+💖 You are not just my best friend — you are family.
 
-st.markdown("---")
+No matter where life takes us,  
+I promise this bond stays forever 🤍
+""")
 
-# ---------------- QR CODE ----------------
-st.markdown("### 📌 One Last Little Surprise")
+# ---------------- FINAL SURPRISE ----------------
+if st.button("🎁 Final Surprise"):
+    st.balloons()
 
-qr_text = "No matter what happens, you will always be my best friend 🤍"
+    st.markdown("## 🌸 A Message From My Heart 🌸")
+    st.markdown("""
+    You make my life brighter just by being in it.  
+    Thank you for choosing me, trusting me,  
+    and loving me in your own way.
 
-qr = qrcode.make(qr_text)
-buf = BytesIO()
-qr.save(buf)
-buf.seek(0)
+    **I am always with you — today, tomorrow, forever.**
+    """)
 
-st.image(buf, caption="Scan this 🤍")
+    # -------- QR CODE (NO EXTRA LIBRARY) --------
+    qr_text = "No matter what happens, you will always be my best friend 🤍"
+    encoded = urllib.parse.quote(qr_text)
+    qr_url = f"https://api.qrserver.com/v1/create-qr-code/?size=300x300&data={encoded}"
 
-st.markdown("---")
+    st.image(qr_url, caption="Scan this 💗")
 
-# ---------------- FINAL LINES ----------------
-st.markdown(
-    "<h2 style='color:#e64980;'>Happy Birthday Varuuu 🎉</h2>",
-    unsafe_allow_html=True
-)
+    st.markdown("## 💕 I LOVE YOU MY BEST FRIEND 💕")
+    st.markdown("### 🎂 HAPPY BIRTHDAY VARUUU 🎂")
 
-st.markdown(
-    "<h3 style='color:#d6336c;'>I LOVE YOU, MY BESTEST FRIEND 🤍</h3>",
-    unsafe_allow_html=True
-)
